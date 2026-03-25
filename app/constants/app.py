@@ -7,6 +7,7 @@ ROUTE_LOGIN = '/login'
 ROUTE_AUTH_CALLBACK = '/auth/callback'
 ROUTE_ME = '/me'
 ROUTE_LOGOUT = '/logout'
+ROUTE_ADMIN_USERS = '/admin/register'
 
 SESSION_SECRET_FALLBACK = 'dev-secret-change-me'
 SESSION_SAME_SITE = 'lax'
@@ -15,9 +16,6 @@ SESSION_OAUTH_STATE_KEY = 'oauth_state'
 
 SESSION_USER_FIELD_ID = 'id'
 SESSION_USER_FIELD_LOGIN = 'login'
-SESSION_USER_FIELD_NAME = 'name'
-SESSION_USER_FIELD_AVATAR_URL = 'avatar_url'
-SESSION_USER_FIELD_PROFILE_URL = 'profile_url'
 
 RESPONSE_KEY_STATUS = 'status'
 RESPONSE_KEY_MESSAGE = 'message'
@@ -31,9 +29,15 @@ INDEX_MESSAGE = 'Use /login to authenticate with GitHub'
 LOGIN_NEXT_MESSAGE = 'Open authorization_url in browser and complete consent, then call /auth/callback.'
 AUTH_SUCCESS_MESSAGE = 'Authentication successful'
 LOGOUT_MESSAGE = 'Logged out'
+USER_PROVISIONED_MESSAGE = 'User provisioned successfully'
+USER_ALREADY_EXISTS_MESSAGE = 'User is already registered'
 
+HTTP_STATUS_OK = 200
 HTTP_STATUS_BAD_REQUEST = 400
 HTTP_STATUS_UNAUTHORIZED = 401
+HTTP_STATUS_FORBIDDEN = 403
+HTTP_STATUS_NOT_FOUND = 404
+HTTP_STATUS_CONFLICT = 409
 HTTP_STATUS_SERVER_ERROR = 500
 HTTP_STATUS_BAD_GATEWAY = 502
 
@@ -43,6 +47,14 @@ ERROR_TOKEN_EXCHANGE_FAILED = 'Failed to exchange OAuth token'
 ERROR_ACCESS_TOKEN_MISSING = 'No access token returned by GitHub'
 ERROR_PROFILE_FETCH_FAILED = 'Failed to fetch GitHub profile'
 ERROR_NOT_AUTHENTICATED = 'Not authenticated'
+ERROR_USER_PERSISTENCE_FAILED = 'Failed to persist authenticated user'
+ERROR_USER_NOT_ALLOWED = 'User is not allowed to login'
+ERROR_ADMIN_REQUIRED = 'Admin access required'
+ERROR_GITHUB_USERNAME_NOT_FOUND = 'GitHub username does not exist'
+ERROR_GITHUB_USERNAME_VALIDATION_FAILED = 'Failed to validate GitHub username'
+ERROR_EMAIL_REQUIRED = 'email is required'
+ERROR_GITHUB_EMAIL_NOT_PUBLIC = 'GitHub public email not available for this username'
+ERROR_GITHUB_EMAIL_MISMATCH = 'Provided email does not match GitHub public email'
 
 OAUTH_STATE_TOKEN_LENGTH = 24
 OAUTH_SCOPE = 'read:user user:email'
@@ -59,6 +71,7 @@ GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
 GITHUB_ACCESS_TOKEN_URL = 'https://github.com/login/oauth/access_token'
 GITHUB_USER_URL = 'https://api.github.com/user'
 GITHUB_USER_EMAILS_URL = 'https://api.github.com/user/emails'
+GITHUB_PUBLIC_USER_URL_TEMPLATE = 'https://api.github.com/users/{git_username}'
 
 HTTPX_TIMEOUT_SECONDS = 15.0
 
@@ -77,3 +90,10 @@ GITHUB_USER_FIELD_LOGIN = 'login'
 GITHUB_USER_FIELD_NAME = 'name'
 GITHUB_USER_FIELD_AVATAR_URL = 'avatar_url'
 GITHUB_USER_FIELD_HTML_URL = 'html_url'
+
+DEFAULT_ROLE_USER = 'user'
+DEFAULT_ROLE_ADMIN = 'admin'
+
+BOOTSTRAP_ADMIN_GITHUB_ID = 250086117
+BOOTSTRAP_ADMIN_LOGIN = 'kishormetapercept'
+BOOTSTRAP_ADMIN_EMAIL = 'kishor.bg@metapercept.com'

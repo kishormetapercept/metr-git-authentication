@@ -6,6 +6,7 @@ import yaml
 from app.constants.config import (
     CONFIG_KEY_GITHUB_CLIENT_ID,
     CONFIG_KEY_GITHUB_CLIENT_SECRET,
+    CONFIG_KEY_POSTGRES_DSN,
     CONFIG_KEY_GITHUB_REDIRECT_URI,
     CONFIG_KEY_SECRET_KEY,
     CONFIG_KEY_SESSION_HTTPS_ONLY,
@@ -50,6 +51,7 @@ class Settings:
             config.get(CONFIG_KEY_GITHUB_REDIRECT_URI, DEFAULT_GITHUB_REDIRECT_URI)
         ).strip()
         self.secret_key = str(config.get(CONFIG_KEY_SECRET_KEY, DEFAULT_EMPTY_STRING)).strip()
+        self.postgres_dsn = str(config.get(CONFIG_KEY_POSTGRES_DSN, DEFAULT_EMPTY_STRING)).strip()
         self.session_https_only = _to_bool(
             config.get(CONFIG_KEY_SESSION_HTTPS_ONLY, DEFAULT_SESSION_HTTPS_ONLY)
         )
