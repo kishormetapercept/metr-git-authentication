@@ -5,21 +5,8 @@ from typing import Any, Mapping
 import psycopg
 from psycopg.rows import dict_row
 
-from app.constants import app as app_constants
-
-
-def _normalize_optional_text(value: Any) -> str | None:
-    if value is None:
-        return None
-    text = str(value).strip()
-    return text or None
-
-
-def _normalize_git_username(value: Any) -> str | None:
-    username = _normalize_optional_text(value)
-    if username is None:
-        return None
-    return username.lower()
+from app.config import constants as app_constants
+from app.utils.identity import normalize_git_username, normalize_optional_text
 
 
 def _table_exists(cursor, table_name: str) -> bool:
@@ -153,7 +140,7 @@ def _migrate_users_table_if_required(cursor) -> None:
                 old_user_roles = list(dict_cursor.fetchall())
 
     for old_user in old_users:
-        git_username = _normalize_git_username(old_user.get('git_username')) or _normalize_git_username(
+        git_username = normalize_git_username(old_user.get('git_username')) or normalize_git_username(
             old_user.get('login')
         )
         if git_username is None:
@@ -169,7 +156,7 @@ def _migrate_users_table_if_required(cursor) -> None:
             except (TypeError, ValueError):
                 migrated_id = None
 
-        email = _normalize_optional_text(old_user.get('email'))
+        email = normalize_optional_text(old_user.get('email'))
 
         users_by_username[git_username] = {
             'git_username': git_username,
@@ -193,7 +180,7 @@ def _migrate_users_table_if_required(cursor) -> None:
         except (TypeError, ValueError):
             continue
 
-        role_username = _normalize_git_username(user_role.get('git_username'))
+        role_username = normalize_git_username(user_role.get('git_username'))
         if role_username is None:
             old_user_id_raw = user_role.get('user_id')
             if old_user_id_raw is None:
@@ -293,7 +280,7 @@ def ensure_bootstrap_admin_user(postgres_dsn: str) -> None:
     if not dsn:
         raise RuntimeError('Bootstrap admin initialization failed: postgres_dsn is not configured.')
 
-    bootstrap_username = _normalize_git_username(app_constants.BOOTSTRAP_ADMIN_LOGIN)
+    bootstrap_username = normalize_git_username(app_constants.BOOTSTRAP_ADMIN_LOGIN)
     if bootstrap_username is None:
         raise RuntimeError('Bootstrap admin initialization failed: invalid bootstrap username.')
 
@@ -332,7 +319,7 @@ def _session_user_from_row(user_row: Mapping[str, Any]) -> dict[str, Any]:
 
 def is_admin_user(postgres_dsn: str, git_username: str) -> bool:
     dsn = (postgres_dsn or '').strip()
-    normalized_username = _normalize_git_username(git_username)
+    normalized_username = normalize_git_username(git_username)
     if not dsn or normalized_username is None:
         return False
 
@@ -352,7 +339,7 @@ def is_admin_user(postgres_dsn: str, git_username: str) -> bool:
 
 def allowed_user_exists(postgres_dsn: str, git_username: str) -> bool:
     dsn = (postgres_dsn or '').strip()
-    normalized_username = _normalize_git_username(git_username)
+    normalized_username = normalize_git_username(git_username)
     if not dsn or normalized_username is None:
         return False
 
@@ -371,13 +358,13 @@ def allowed_user_exists(postgres_dsn: str, git_username: str) -> bool:
 
 def add_allowed_user(postgres_dsn: str, git_username: str, email: str | None = None) -> dict[str, Any]:
     dsn = (postgres_dsn or '').strip()
-    normalized_username = _normalize_git_username(git_username)
+    normalized_username = normalize_git_username(git_username)
     if not dsn:
         raise RuntimeError('postgres_dsn is not configured.')
     if normalized_username is None:
         raise ValueError('git_username is required.')
 
-    normalized_email = _normalize_optional_text(email)
+    normalized_email = normalize_optional_text(email)
     with psycopg.connect(dsn, row_factory=dict_row) as connection:
         with connection.cursor() as cursor:
             cursor.execute(
@@ -419,7 +406,7 @@ def authorize_existing_github_user(
         raise RuntimeError('postgres_dsn is not configured.')
 
     github_id_raw = github_user.get(app_constants.GITHUB_USER_FIELD_ID)
-    git_username = _normalize_git_username(github_user.get(app_constants.GITHUB_USER_FIELD_LOGIN))
+    git_username = normalize_git_username(github_user.get(app_constants.GITHUB_USER_FIELD_LOGIN))
     if github_id_raw is None:
         raise ValueError('GitHub user id is missing from OAuth response.')
     if git_username is None:
@@ -430,7 +417,7 @@ def authorize_existing_github_user(
     except (TypeError, ValueError) as error:
         raise ValueError(f'Invalid GitHub user id value: {github_id_raw!r}') from error
 
-    normalized_email = _normalize_optional_text(email)
+    normalized_email = normalize_optional_text(email)
 
     with psycopg.connect(dsn, row_factory=dict_row) as connection:
         with connection.cursor() as cursor:
