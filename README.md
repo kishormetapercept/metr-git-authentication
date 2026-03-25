@@ -10,15 +10,15 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-## 2) Configure environment
+## 2) Configure YAML
 
-Copy `.env.example` to `.env` and set values:
+Copy `config.example.yaml` to `config.yaml` and set values:
 
-- `GITHUB_CLIENT_ID`
-- `GITHUB_CLIENT_SECRET`
-- `GITHUB_REDIRECT_URI` (must match your GitHub OAuth app callback URL)
-- `SECRET_KEY`
-- `SESSION_HTTPS_ONLY`
+- `github_client_id`
+- `github_client_secret`
+- `github_redirect_uri` (must match your GitHub OAuth app callback URL)
+- `secret_key`
+- `session_https_only`
 
 On GitHub, create an OAuth app:
 
@@ -28,7 +28,7 @@ On GitHub, create an OAuth app:
 ## 3) Run
 
 ```bash
-uvicorn app.main:app --reload --port 8000 --env-file .env
+uvicorn app.main:app --reload --port 8000
 ```
 
 ## 4) Endpoints

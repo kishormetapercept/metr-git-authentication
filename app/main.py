@@ -29,7 +29,7 @@ def _require_config(settings: Settings) -> None:
     if not settings.is_valid:
         raise HTTPException(
             status_code=500,
-            detail='Service is not configured. Check required environment variables.',
+            detail='Service is not configured. Check required fields in config.yaml.',
         )
 
 
